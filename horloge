@@ -1,0 +1,78 @@
+import time
+import threading
+
+heures = (12, 50, 58)
+alarme = (13, 00, 00)
+mode_12 = True
+mode_24 = False
+pause_horloge = False
+exit_program = False
+#fontion principale 
+def affichage_heures():
+    global heures, pause_horloge, exit_program
+    while not exit_program:
+        if not pause_horloge:
+            Heures, minutes, secondes = heures
+            time.sleep(1)
+            heures = (heures[0], heures[1], heures[2] + 1)
+            if heures[2] == 60:
+                heures = (heures[0], heures[1] + 1, 0)
+                if heures[1] == 60:
+                    heures = (heures[0] + 1, 0, 0)
+            alarmes(alarme, (Heures, minutes, secondes))
+            choisir_mode_affichage(Heures, minutes, secondes, mode_12, not mode_12)
+
+def alarmes(alarme, heures):
+    if alarme == heures:
+        print("C'est l'heure de l'alarme!")
+
+def choisir_mode_affichage(Heures, minutes, secondes, mode_12, mode_24):
+    if mode_12:
+        if Heures <= 12:
+            print(f"{Heures % 12 or 12}:{minutes:02d}:{secondes:02d} AM")
+        else:
+            print(f"{Heures % 12 or 12}:{minutes:02d}:{secondes:02d} PM")
+    if mode_24:
+        print(f"{Heures:02d}:{minutes:02d}:{secondes:02d}")
+#fonction pour la pause 
+def mettre_en_pause():
+    global pause_horloge
+    pause_horloge = True
+    print("L'horloge est en pause.")
+#fonction pour relancer mon horloge
+def relancer_horloge():
+    global pause_horloge
+    pause_horloge = False
+    print("L'horloge a été relancée.")
+#fonction pour quitter le programme
+def quitter_programme():
+    global exit_program
+    exit_program = True
+#fonction pour delander a l'utilisateur de faire la pause et de relancé l'horloge
+def entrer_utilisateur():
+    global pause_horloge, exit_program
+    while not exit_program:
+        user_input = input("Appuyez sur 'p' et entrée  pour mettre en pause, 'r' et entreé pour relancer, ou 'entrée' pour quitter  : ")
+        
+        if user_input == 'p':
+            mettre_en_pause()
+        elif user_input == 'r':
+            relancer_horloge()
+        elif user_input == '':
+            quitter_programme()
+
+# Création d'un thread pour l'horloge
+thread_horloge = threading.Thread(target=affichage_heures)
+
+# Création d'un thread pour l'entrée utilisateur
+thread_utilisateur = threading.Thread(target=entrer_utilisateur)
+
+# Démarrage des threads
+thread_horloge.start()
+thread_utilisateur.start()
+
+# Attente que le thread de l'horloge se termine
+thread_horloge.join()
+
+
+
