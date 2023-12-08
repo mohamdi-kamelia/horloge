@@ -1,10 +1,10 @@
 import time
 import threading
 
-heures = (12, 50, 58)
+heures = (24, 59, 58)
 alarme = (13, 00, 00)
-mode_12 = True
-mode_24 = False
+mode_12 = False
+mode_24 = True
 pause_horloge = False
 exit_program = False
 #fontion principale 
@@ -19,13 +19,16 @@ def affichage_heures():
                 heures = (heures[0], heures[1] + 1, 0)
                 if heures[1] == 60:
                     heures = (heures[0] + 1, 0, 0)
+                    if heures[0] >= 24:
+                        heures = (0 , 0, 0)
+
             alarmes(alarme, (Heures, minutes, secondes))
             choisir_mode_affichage(Heures, minutes, secondes, mode_12, not mode_12)
-
+#fonction pour l'alarme
 def alarmes(alarme, heures):
     if alarme == heures:
         print("C'est l'heure de l'alarme!")
-
+#fonction pour le choix de mode d'affichage 
 def choisir_mode_affichage(Heures, minutes, secondes, mode_12, mode_24):
     if mode_12:
         if Heures <= 12:
